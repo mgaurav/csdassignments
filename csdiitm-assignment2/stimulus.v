@@ -10,7 +10,7 @@ module stimulus;
    
    initial
      begin
-	$monitor($time, "A = %b, B = %b, as = %b, ---> cout = %b, sum = %b %d\n", A, B, as, cout, sum, sum);
+	$monitor($time, "A = %d, B = %d, as = %b, -> %b, sum = %d %b\n", A, B, as, cout, sum, sum);
      end
 
    initial
@@ -21,31 +21,31 @@ module stimulus;
 	B = 16'd0;
 	as = 0;
 	
-	#10 A = 16'd16;
+	#2 A = 16'd16;
 	B = 16'd3;
 
-	#20 A = 16'd32768;
+	#4 A = 16'd32768;
 	B = 16'd32768;
 	as = 1;
 	
-	#20 A = 16'd33000;
+	#4 A = 16'd33000;
 	B = 16'd18000;
 
-	#20 A = 16'd60000;
+	#4 A = 16'd60000;
 	B = 16'd33000;
 
-	#20 A = 16'd1200;
+	#4 A = 16'd1200;
 	B = 16'd03;
 	
-	#20 A = 16'd99;
+	#4 A = 16'd99;
 	B = 16'd99;
 	as = 0;
 
-	#20 A = 16'd100;
+	#4 A = 16'd100;
 	B = 16'd1;
 	as = 1;
 
-	#20 A = 16'd1;
+	#4 A = 16'd1;
 	B = 1;
 	as = 0;
 	
@@ -53,7 +53,7 @@ module stimulus;
 
    always
      begin
-	#10 clk = ~clk;
+	#2 clk = ~clk;
      end
    
 endmodule // stimulus
