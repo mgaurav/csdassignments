@@ -86,8 +86,6 @@ module onebitleftshifter(out, in);
    buf b32(out[31], in[30]);
 
 endmodule // 32bitrightshifter
-
-   
    
 
 module extend16bitto32bit(out , in);

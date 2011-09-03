@@ -8,11 +8,11 @@ module fulladder1bit(s,c,x,y,z);
 
    wire   temp1, temp2, temp3;
    
-   xor g1(s,x,y,z);
-   and a1(temp1, x, y);
-   and a2(temp2, x, z);
-   and a3(temp3, y, z);
-   or (c, temp1, temp2, temp3);
+   xor #(1) (s,x,y,z);
+   and #(1) (temp1, x, y);
+   and #(1) (temp2, x, z);
+   and #(1) (temp3, y, z);
+   or #(1) (c, temp1, temp2, temp3);
    
 endmodule // fulladder1bit
 	  
@@ -25,9 +25,7 @@ module csa32bit(s, c, x, y, z);
    input [31:0]  z;
 
    buf b1(c[0], 1'b 0);
-   wire 	 temp;
-   
-   
+   wire 	 temp;   
    
    fulladder1bit f1(s[0], c[1], x[0], y[0], z[0]);
    fulladder1bit f2(s[1], c[2], x[1], y[1], z[1]);

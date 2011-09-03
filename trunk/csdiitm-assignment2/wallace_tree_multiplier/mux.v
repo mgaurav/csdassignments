@@ -10,15 +10,15 @@ module fourto1mux1bit(out, in3, in2, in1, in0, select);
    wire        n1,n0;
    wire        m0,m1,m2,m3;
 
-   not not0(n0, select[0]);
-   not not1(n1, select[1]);
+   not #(1) (n0, select[0]);
+   not #(1) (n1, select[1]);
 
-   and and1(m0, n0, n1, in0);
-   and and2(m1, select[0], n1, in1);
-   and and3(m2, n0, select[1],  in2);
-   and and4(m3, select[1], select[0], in3);
+   and #(1) (m0, n0, n1, in0);
+   and #(1) (m1, select[0], n1, in1);
+   and #(1) (m2, n0, select[1],  in2);
+   and #(1) (m3, select[1], select[0], in3);
 
-   or(out, m0, m1, m2, m3);
+   or #(1) (out, m0, m1, m2, m3);
 
 endmodule // fourto1mux1bit
 
@@ -37,14 +37,13 @@ module eightto1mux1bit(out, in7, in6, in5, in4, in3, in2, in1, in0, select);
    fourto1mux1bit m1(temp0, in3, in2, in1, in0, select1);
    fourto1mux1bit m2(temp1, in7, in6, in5, in4, select1);
 
-   not n1 (n, select[2]);
+   not #(1) (n, select[2]);
 
-   and a1 (temp2, temp0, n);
-   and a2 (temp3, temp1, select[2]);
+   and #(1) (temp2, temp0, n);
+   and #(1) (temp3, temp1, select[2]);
 
-   or o1 (out, temp2, temp3);
+   or #(1) (out, temp2, temp3);
 endmodule // eightto1mux1bit
-
    
 
 module eightto1mux16bit(out, in7, in6, in5, in4, in3, in2, in1, in0, select);

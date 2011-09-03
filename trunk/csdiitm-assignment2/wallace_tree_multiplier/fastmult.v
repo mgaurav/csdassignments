@@ -141,8 +141,6 @@ module fastmultiplier16bit(out, m, multiplier, clk);
    csa32bit c5(s5,c5,s3,c3,s4);
    csa32bit c6(s6,c6,s5,c5,c4);
 
-   adder32bit a1(out, cout, s6, c6, 0, clk);
-   
-   
+   adder32bit a1(out, cout, s6, c6, 0, clk);   
 	  
 endmodule // fastmultiplier16bit
