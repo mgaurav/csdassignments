@@ -3,14 +3,11 @@
 `include "negate.v"
 `include "mux.v"
 `include "csa.v"
-`include "adder32bit.v"
 
-
-module bitpairrecoder16bit(p, m, b2, b1, b0, clk);
+module bitpairrecoder16bit(p, m, b2, b1, b0);
    
    output [31:0] p;
    input [15:0]  m;
-   input 	 clk;
    
    input 	 b2, b1, b0;
    
@@ -38,9 +35,9 @@ module bitpairrecoder16bit(p, m, b2, b1, b0, clk);
    sixteenbitbuffer b5 (t2, m);
    sixteenbitleftshifter r3 (t3, m);
    sixteenbitleftshifter r4 (temp1, m);
-   twoscomplement16bit c1 (t4, temp1, clk);
-   twoscomplement16bit c2 (t5, m, clk);
-   twoscomplement16bit c3 (t6, m, clk);
+   twoscomplement16bit c1 (t4, temp1);
+   twoscomplement16bit c2 (t5, m);
+   twoscomplement16bit c3 (t6, m);
    
    eightto1mux16bit m1 (temp2, t7, t6, t5, t4, t3, t2, t1, t0, select);
 
@@ -49,12 +46,12 @@ module bitpairrecoder16bit(p, m, b2, b1, b0, clk);
 endmodule // boothrecoder16bit
 
 
-	ISB3[159:128] = c3;
+/*	ISB3[159:128] = c3;
 	ISB3[127:96] = c2;
 	ISB3[95:64] = s3;
 	ISB3[63:32] = q7;
 	ISB3[31:0] = q6;
-
+*/
 
 /***
  * Following is the structure of ISB registers :
@@ -119,14 +116,14 @@ module fastmultiplier16bit(out, m, multiplier, clk);
 
    wire 	 cout;
    
-   bitpairrecoder16bit b1(p0, ISB1[31:16], ISB1[1], ISB1[0], 0,clk);
-   bitpairrecoder16bit b2(p1, ISB1[31:16], ISB1[3], ISB1[2], ISB1[1], clk);
-   bitpairrecoder16bit b3(p2, ISB1[31:16], ISB1[5], ISB1[4], ISB1[3], clk);
-   bitpairrecoder16bit b4(p3, ISB1[31:16], ISB1[7], ISB1[6], ISB1[5], clk);
-   bitpairrecoder16bit b5(p4, ISB1[31:16], ISB1[9], ISB1[8], ISB1[7], clk);
-   bitpairrecoder16bit b6(p5, ISB1[31:16], ISB1[11], ISB1[10], ISB1[9], clk);
-   bitpairrecoder16bit b7(p6, ISB1[31:16], ISB1[13], ISB1[12], ISB1[11], clk);
-   bitpairrecoder16bit b8(p7, ISB1[31:16], ISB1[15], ISB1[14], ISB1[13], clk);
+   bitpairrecoder16bit b1(p0, ISB1[31:16], ISB1[1], ISB1[0], 0);
+   bitpairrecoder16bit b2(p1, ISB1[31:16], ISB1[3], ISB1[2], ISB1[1]);
+   bitpairrecoder16bit b3(p2, ISB1[31:16], ISB1[5], ISB1[4], ISB1[3]);
+   bitpairrecoder16bit b4(p3, ISB1[31:16], ISB1[7], ISB1[6], ISB1[5]);
+   bitpairrecoder16bit b5(p4, ISB1[31:16], ISB1[9], ISB1[8], ISB1[7]);
+   bitpairrecoder16bit b6(p5, ISB1[31:16], ISB1[11], ISB1[10], ISB1[9]);
+   bitpairrecoder16bit b7(p6, ISB1[31:16], ISB1[13], ISB1[12], ISB1[11]);
+   bitpairrecoder16bit b8(p7, ISB1[31:16], ISB1[15], ISB1[14], ISB1[13]);
 
    //level 2 of pipelining starts
    
@@ -153,7 +150,7 @@ module fastmultiplier16bit(out, m, multiplier, clk);
    csa32bit c6(s6,c6,s5,c5,c4);
 
    //level 3 of pipelining starts
-   adder32bit a1(out, cout, ISB3[31:0], ISB3[63:32], 0, clk);
+   adder32bit a1(out, cout, ISB3[31:0], ISB3[63:32], 0);
 
    always @(posedge clk)
      begin
