@@ -1,27 +1,4 @@
 
-module fourto1mux1bit(out, in3, in2, in1, in0, select);
-   output out;
-   input  in0;
-   input  in1;
-   input  in2;
-   input  in3;
-   input [1:0] select;
-
-   wire        n1,n0;
-   wire        m0,m1,m2,m3;
-
-   not #(1) (n0, select[0]);
-   not #(1) (n1, select[1]);
-
-   and #(1) (m0, n0, n1, in0);
-   and #(1) (m1, select[0], n1, in1);
-   and #(1) (m2, n0, select[1],  in2);
-   and #(1) (m3, select[1], select[0], in3);
-
-   or #(1) (out, m0, m1, m2, m3);
-
-endmodule // fourto1mux1bit
-
 module eightto1mux1bit(out, in7, in6, in5, in4, in3, in2, in1, in0, select);
    output  out;
    input   in7, in6, in5, in4, in3, in2, in1, in0;
@@ -29,20 +6,25 @@ module eightto1mux1bit(out, in7, in6, in5, in4, in3, in2, in1, in0, select);
 
    wire        temp1, temp0, n, temp2, temp3;
 
-   wire  [1:0]      select1;
+   wire  [2:0]      select1;
+   wire [2:0] 	    neg;
+
+   not #(1) (neg[0], select[0]);
+   not #(1) (neg[1], select[1]);
+   not #(1) (neg[2], select[2]);
+
+   and #(1) (t0, neg[2], neg[1], neg[0], in0);
+   and #(1) (t1, neg[2], neg[1], select[0], in1);
+   and #(1) (t2, neg[2], select[1], neg[0], in2);
+   and #(1) (t3, neg[2], select[1], select[0], in3);
+   and #(1) (t4, select[2], neg[1], neg[0], in4);
+   and #(1) (t5, select[2], neg[1], select[0], in5);
+   and #(1) (t6, select[2], select[1], neg[0], in6);
+   and #(1) (t7, select[2], select[1], select[0], in7);
+
+   or #(1) (t11, t0, t1, t2, t3);
+   or #(1) (out, t11, t4, t5, t6, t7);
    
-   buf b1(select1[1], select[1]);
-   buf b2(select1[0], select[0]);
- 
-   fourto1mux1bit m1(temp0, in3, in2, in1, in0, select1);
-   fourto1mux1bit m2(temp1, in7, in6, in5, in4, select1);
-
-   not #(1) (n, select[2]);
-
-   and #(1) (temp2, temp0, n);
-   and #(1) (temp3, temp1, select[2]);
-
-   or #(1) (out, temp2, temp3);
 endmodule // eightto1mux1bit
    
 
@@ -78,3 +60,24 @@ module eightto1mux16bit(out, in7, in6, in5, in4, in3, in2, in1, in0, select);
    eightto1mux1bit m16(out[15], in7[15], in6[15], in5[15], in4[15], in3[15], in2[15], in1[15], in0[15], select);
 
 endmodule // fourto1mux16bit
+
+/*
+module stimulus;
+   reg [7:0] a;
+   reg [2:0] select;
+   wire      out;
+   
+   eightto1mux1bit EBM (out, a[7], a[6], a[5], a[4], a[3], a[2], a[1], a[0], select);
+   
+   initial
+     begin
+	$monitor($time, "a = %b, select = %b, out = %b", a, select, out);
+	a = 8'b01010111;
+	select = 3'b000;
+
+	#4 select = 3'b101;
+	#8 select = 3'b100;
+     end
+
+endmodule // stimulus
+*/

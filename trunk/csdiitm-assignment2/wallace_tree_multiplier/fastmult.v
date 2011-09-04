@@ -25,19 +25,19 @@ module bitpairrecoder16bit(p, m, b2, b1, b0);
    wire [15:0] 	 temp1;
    wire [15:0] 	 temp2;
    
-   buf b1 (select[0], b0);
-   buf b2 (select[1], b1);
-   buf b3 (select[2], b2);
+   buf (select[0], b0);
+   buf (select[1], b1);
+   buf (select[2], b2);
 
-   sixteenbitbuffer b0 (t0, 8'b 0);
-   sixteenbitbuffer b7 (t7, 8'b 0);
-   sixteenbitbuffer b4 (t1, m);
-   sixteenbitbuffer b5 (t2, m);
-   sixteenbitleftshifter r3 (t3, m);
-   sixteenbitleftshifter r4 (temp1, m);
-   twoscomplement16bit c1 (t4, temp1);
-   twoscomplement16bit c2 (t5, m);
-   twoscomplement16bit c3 (t6, m);
+   sixteenbitbuffer SBB0 (t0, 16'b 0);
+   sixteenbitbuffer SBB1 (t7, 16'b 0);
+   sixteenbitbuffer SBB2 (t1, m);
+   sixteenbitbuffer SBB3 (t2, m);
+   sixteenbitleftshifter SBLS1 (t3, m);
+   sixteenbitleftshifter SBLS2 (temp1, m);
+   twoscomplement16bit TC1 (t4, temp1);
+   twoscomplement16bit TC2 (t5, m);
+   twoscomplement16bit TC3 (t6, m);
    
    eightto1mux16bit m1 (temp2, t7, t6, t5, t4, t3, t2, t1, t0, select);
 
@@ -45,13 +45,6 @@ module bitpairrecoder16bit(p, m, b2, b1, b0);
    
 endmodule // boothrecoder16bit
 
-
-/*	ISB3[159:128] = c3;
-	ISB3[127:96] = c2;
-	ISB3[95:64] = s3;
-	ISB3[63:32] = q7;
-	ISB3[31:0] = q6;
-*/
 
 /***
  * Following is the structure of ISB registers :
@@ -61,8 +54,8 @@ endmodule // boothrecoder16bit
  *      |________|__________________|
  * 
  * pi's are partial products after bit pair multiplication
- *      127______111______95_______79_______63_______47_______31_______15_______0 
- * ISB2 | 16b p7 | 16b p6 | 16b p5 | 16b p4 | 16b p3 | 16b p2 | 16b p1 | 16b p0 | 128 bits
+ *      255______223______191______159______127______95_______63_______31_______0 
+ * ISB2 | 32b p7 | 32b p6 | 32b p5 | 32b p4 | 32b p3 | 32b p2 | 32b p1 | 32b p0 | 256 bits
  *      |________|________|________|________|________|________|________|________|
  * 
  *       63_______31_______0  
@@ -78,8 +71,8 @@ module fastmultiplier16bit(out, m, multiplier, clk);
 
    //generate the partial products to be added using the bt pair recoding technique 
    reg [31:0] 	 ISB1;
-   reg [127:0] 	 ISB2;
-   reg [159:0] 	 ISB3;
+   reg [255:0] 	 ISB2;
+   reg [63:0] 	 ISB3;
    
    
    wire [31:0] 	 p0;
@@ -116,55 +109,54 @@ module fastmultiplier16bit(out, m, multiplier, clk);
 
    wire 	 cout;
    
-   bitpairrecoder16bit b1(p0, ISB1[31:16], ISB1[1], ISB1[0], 0);
-   bitpairrecoder16bit b2(p1, ISB1[31:16], ISB1[3], ISB1[2], ISB1[1]);
-   bitpairrecoder16bit b3(p2, ISB1[31:16], ISB1[5], ISB1[4], ISB1[3]);
-   bitpairrecoder16bit b4(p3, ISB1[31:16], ISB1[7], ISB1[6], ISB1[5]);
-   bitpairrecoder16bit b5(p4, ISB1[31:16], ISB1[9], ISB1[8], ISB1[7]);
-   bitpairrecoder16bit b6(p5, ISB1[31:16], ISB1[11], ISB1[10], ISB1[9]);
-   bitpairrecoder16bit b7(p6, ISB1[31:16], ISB1[13], ISB1[12], ISB1[11]);
-   bitpairrecoder16bit b8(p7, ISB1[31:16], ISB1[15], ISB1[14], ISB1[13]);
+   bitpairrecoder16bit BP1(p0, ISB1[31:16], ISB1[1], ISB1[0], 0);
+   bitpairrecoder16bit BP2(p1, ISB1[31:16], ISB1[3], ISB1[2], ISB1[1]);
+   bitpairrecoder16bit BP3(p2, ISB1[31:16], ISB1[5], ISB1[4], ISB1[3]);
+   bitpairrecoder16bit BP4(p3, ISB1[31:16], ISB1[7], ISB1[6], ISB1[5]);
+   bitpairrecoder16bit BP5(p4, ISB1[31:16], ISB1[9], ISB1[8], ISB1[7]);
+   bitpairrecoder16bit BP6(p5, ISB1[31:16], ISB1[11], ISB1[10], ISB1[9]);
+   bitpairrecoder16bit BP7(p6, ISB1[31:16], ISB1[13], ISB1[12], ISB1[11]);
+   bitpairrecoder16bit BP8(p7, ISB1[31:16], ISB1[15], ISB1[14], ISB1[13]);
 
    //level 2 of pipelining starts
    
    //shift the partial products appropriately
    //pi is shifted by 2*i bits to its left...0 appended to the less significant bit values.
-   twobitleftshifter t1(q1, ISB2[31:16]);
-   fourbitleftshifter f1(q2, ISB2[47:32]);
-   sixbitleftshifter s1(q3, ISB2[63:48]);
-   eightbitleftshifter e1(q4, ISB2[79:64]);
-   tenbitleftshifter t2(q5, ISB2[95:80]);
-   twelvebitleftshifter t3(q6, ISB2[111:96]);
-   fourteenbitleftshifter t4(q7, ISB2[127:112]);
-
+   twobitleftshifter t1(q1, ISB2[63:32]);
+   fourbitleftshifter f1(q2, ISB2[95:64]);
+   sixbitleftshifter SBLS1(q3, ISB2[127:96]);
+   eightbitleftshifter e1(q4, ISB2[159:128]);
+   tenbitleftshifter t2(q5, ISB2[191:160]);
+   twelvebitleftshifter t3(q6, ISB2[223:192]);
+   fourteenbitleftshifter t4(q7, ISB2[255:224]);
 
    //now we have all the eight 32 bit partial products....we need to add them using the csas over the wallace tree.
-   csa32bit c1(s1,c1,ISB2[15:0],q1,q2);
-   csa32bit c2(s2,c2,q3,q4,q5);
+   csa32bit CSA1(s1,c1,ISB2[31:0],q1,q2);
+   csa32bit CSA2(s2,c2,q3,q4,q5);
    
-   csa32bit c3(s3,c3,s1,c1,s2);
-   csa32bit c4(s4,c4,c2,q6,q7);
+   csa32bit CSA3(s3,c3,s1,c1,s2);
+   csa32bit CSA4(s4,c4,c2,q6,q7);
 
-   csa32bit c5(s5,c5,s3,c3,s4);
+   csa32bit CSA5(s5,c5,s3,c3,s4);
    
-   csa32bit c6(s6,c6,s5,c5,c4);
+   csa32bit CSA6(s6,c6,s5,c5,c4);
 
    //level 3 of pipelining starts
-   adder32bit a1(out, cout, ISB3[31:0], ISB3[63:32], 0);
+   adder32bit Adder1(out, cout, ISB3[31:0], ISB3[63:32], 0);
 
    always @(posedge clk)
      begin
 	ISB3[63:32] = c6;
 	ISB3[31:0] = s6;
 		
-	ISB2[127:112] = p7;
-	ISB2[111:96] = p6;
-	ISB2[95:80] = p5;
-	ISB2[79:64] = p4;
-	ISB2[63:48] = p3;
-	ISB2[47:32] = p2;
-	ISB2[31:16] = p1;
-	ISB2[15:0] = p0;
+	ISB2[255:224] = p7;
+	ISB2[223:192] = p6;
+	ISB2[191:160] = p5;
+	ISB2[159:128] = p4;
+	ISB2[127:96] = p3;
+	ISB2[95:64] = p2;
+	ISB2[63:32] = p1;
+	ISB2[31:0] = p0;
 	
 	ISB1[31:16] = m;
 	ISB1[15:0] = multiplier;

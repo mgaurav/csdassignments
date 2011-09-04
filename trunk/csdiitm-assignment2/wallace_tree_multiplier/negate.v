@@ -7,6 +7,7 @@ module twoscomplement16bit(out, in);
    wire [15:0] 	 one;
    wire [15:0] 	 temp;
    wire 	 as;
+   wire 	 cout;
    
    assign one = 16'b1;
    assign as = 0;

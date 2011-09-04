@@ -137,7 +137,7 @@ module stimulus;
        end
 
    initial
-     begin
+     begin	
 	A = 32'b10101010_10101010_10101010_10101010;
 	B = 32'b01010101_01010101_01010101_01010101;
 	c0 = 0;
@@ -158,4 +158,4 @@ module stimulus;
      end // initial begin
 
 endmodule // stimulus
-*/
+ */
