@@ -1,9 +1,8 @@
-`include "claadder.v"
+`include "hierarchialclas.v"
 
-module twoscomplement16bit(out, in, clk);
+module twoscomplement16bit(out, in);
    output [15:0] out;
    input [15:0]  in;
-   input 	 clk;
    
    wire [15:0] 	 one;
    wire [15:0] 	 temp;
@@ -30,6 +29,6 @@ module twoscomplement16bit(out, in, clk);
    not #(1) n15(temp[14], in[14]);
    not #(1) n16(temp[15], in[15]);
 
-   adder16 adder0(out, cout, one, temp, as, clk);
+   hierarchial_cla_16 adder(out, cout, one, temp, as);
    
 endmodule // twoscomplement16bit
