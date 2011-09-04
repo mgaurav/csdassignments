@@ -7,7 +7,7 @@
 
 
 module bitpairrecoder16bit(p, m, b2, b1, b0, clk);
-
+   
    output [31:0] p;
    input [15:0]  m;
    input 	 clk;
@@ -49,7 +49,30 @@ module bitpairrecoder16bit(p, m, b2, b1, b0, clk);
 endmodule // boothrecoder16bit
 
 
-   
+	ISB3[159:128] = c3;
+	ISB3[127:96] = c2;
+	ISB3[95:64] = s3;
+	ISB3[63:32] = q7;
+	ISB3[31:0] = q6;
+
+
+/***
+ * Following is the structure of ISB registers :
+ * m = multiplicand
+ *       31_______15________________0  
+ * ISB1 | 16 b m | 16 b multiplier  | 32 bits
+ *      |________|__________________|
+ * 
+ * pi's are partial products after bit pair multiplication
+ *      127______111______95_______79_______63_______47_______31_______15_______0 
+ * ISB2 | 16b p7 | 16b p6 | 16b p5 | 16b p4 | 16b p3 | 16b p2 | 16b p1 | 16b p0 | 128 bits
+ *      |________|________|________|________|________|________|________|________|
+ * 
+ *       63_______31_______0  
+ * ISB3 | 32 b c6| 32 b s6 | 64 bits
+ *      |________|_________|
+ * 
+*/
 module fastmultiplier16bit(out, m, multiplier, clk);
    output [31:0] out;
    input [15:0]  m;
@@ -57,6 +80,9 @@ module fastmultiplier16bit(out, m, multiplier, clk);
    input 	 clk;
 
    //generate the partial products to be added using the bt pair recoding technique 
+   reg [31:0] 	 ISB1;
+   reg [127:0] 	 ISB2;
+   reg [159:0] 	 ISB3;
    
    
    wire [31:0] 	 p0;
@@ -93,54 +119,58 @@ module fastmultiplier16bit(out, m, multiplier, clk);
 
    wire 	 cout;
    
-   always@(multiplier, m)
-     begin
-	$display ("input1 = %b\n input2 = %b\n",multiplier, m);
-     end
-  
-   bitpairrecoder16bit b1(p0, m, multiplier[1], multiplier[0], 0,clk);
-   bitpairrecoder16bit b2(p1, m, multiplier[3], multiplier[2], multiplier[1], clk);
-   bitpairrecoder16bit b3(p2, m, multiplier[5], multiplier[4], multiplier[3], clk);
-   bitpairrecoder16bit b4(p3, m, multiplier[7], multiplier[6], multiplier[5], clk);
-   bitpairrecoder16bit b5(p4, m, multiplier[9], multiplier[8], multiplier[7], clk);
-   bitpairrecoder16bit b6(p5, m, multiplier[11], multiplier[10], multiplier[9], clk);
-   bitpairrecoder16bit b7(p6, m, multiplier[13], multiplier[12], multiplier[11], clk);
-   bitpairrecoder16bit b8(p7, m, multiplier[15], multiplier[14], multiplier[13], clk);
+   bitpairrecoder16bit b1(p0, ISB1[31:16], ISB1[1], ISB1[0], 0,clk);
+   bitpairrecoder16bit b2(p1, ISB1[31:16], ISB1[3], ISB1[2], ISB1[1], clk);
+   bitpairrecoder16bit b3(p2, ISB1[31:16], ISB1[5], ISB1[4], ISB1[3], clk);
+   bitpairrecoder16bit b4(p3, ISB1[31:16], ISB1[7], ISB1[6], ISB1[5], clk);
+   bitpairrecoder16bit b5(p4, ISB1[31:16], ISB1[9], ISB1[8], ISB1[7], clk);
+   bitpairrecoder16bit b6(p5, ISB1[31:16], ISB1[11], ISB1[10], ISB1[9], clk);
+   bitpairrecoder16bit b7(p6, ISB1[31:16], ISB1[13], ISB1[12], ISB1[11], clk);
+   bitpairrecoder16bit b8(p7, ISB1[31:16], ISB1[15], ISB1[14], ISB1[13], clk);
 
-   always@(multiplier, m)
-     begin
-	#100 $display ("p0 = %b\n p1 = %b\n p2 = %b\n p3=%b\n p4 = %b\n p5 = %b\n p6 = %b\n p7 = %b\n\n",p0,p1,p2,p3,p4,p5,p6,p7);
-     end
+   //level 2 of pipelining starts
    
    //shift the partial products appropriately
    //pi is shifted by 2*i bits to its left...0 appended to the less significant bit values.
-   twobitleftshifter t1(q1, p1);
-   fourbitleftshifter f1(q2, p2);
-   sixbitleftshifter s1(q3, p3);
-   eightbitleftshifter e1(q4, p4);
-   tenbitleftshifter t2(q5, p5);
-   twelvebitleftshifter t3(q6, p6);
-   fourteenbitleftshifter t4(q7, p7);
+   twobitleftshifter t1(q1, ISB2[31:16]);
+   fourbitleftshifter f1(q2, ISB2[47:32]);
+   sixbitleftshifter s1(q3, ISB2[63:48]);
+   eightbitleftshifter e1(q4, ISB2[79:64]);
+   tenbitleftshifter t2(q5, ISB2[95:80]);
+   twelvebitleftshifter t3(q6, ISB2[111:96]);
+   fourteenbitleftshifter t4(q7, ISB2[127:112]);
 
 
-   always@(multiplier, m)
-     begin
-	#400 $display ("q0 = %b\n q1 = %b\n q2 = %b\n q3=%b\n q4 = %b\n q5 = %b\n q6 = %b\n q7 = %b\n\n",p0,q1,q2,q3,q4,q5,q6,q7);
-     end
-      
    //now we have all the eight 32 bit partial products....we need to add them using the csas over the wallace tree.
-   csa32bit c1(s1,c1,p0,q1,q2);
-   always@(multiplier,m)
-     begin
-	#500 $display ("q0  = %b\n q1 = %b\n q2 = %b\n s1 = %b\n 1 = %b\1",p0,q1,q2,s1,c1);
-     end
-   
+   csa32bit c1(s1,c1,ISB2[15:0],q1,q2);
    csa32bit c2(s2,c2,q3,q4,q5);
+   
    csa32bit c3(s3,c3,s1,c1,s2);
    csa32bit c4(s4,c4,c2,q6,q7);
+
    csa32bit c5(s5,c5,s3,c3,s4);
+   
    csa32bit c6(s6,c6,s5,c5,c4);
 
-   adder32bit a1(out, cout, s6, c6, 0, clk);   
+   //level 3 of pipelining starts
+   adder32bit a1(out, cout, ISB3[31:0], ISB3[63:32], 0, clk);
+
+   always @(posedge clk)
+     begin
+	ISB3[63:32] = c6;
+	ISB3[31:0] = s6;
+		
+	ISB2[127:112] = p7;
+	ISB2[111:96] = p6;
+	ISB2[95:80] = p5;
+	ISB2[79:64] = p4;
+	ISB2[63:48] = p3;
+	ISB2[47:32] = p2;
+	ISB2[31:16] = p1;
+	ISB2[15:0] = p0;
+	
+	ISB1[31:16] = m;
+	ISB1[15:0] = multiplier;
+     end
 	  
 endmodule // fastmultiplier16bit
