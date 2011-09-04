@@ -92,7 +92,6 @@ module adder32bit(out, cout, in1, in2, as, clk);
    xor #(1) (in2m[29], in2[29], as);
    xor #(1) (in2m[30], in2[30], as);
    xor #(1) (in2m[31], in2[31], as);
-
    
    cla4bit CLA0(out[3:0], c4, in1[3:0], in2m[3:0], as);
    cla4bit CLA1(out[7:4], c8, in1[7:4], in2m[7:4], c4);
