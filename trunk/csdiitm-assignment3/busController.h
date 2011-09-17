@@ -9,17 +9,17 @@
 
 #include "cache.h"
 #include "block.h"
+#include "busRequest.h"
 #include <queue>
 
 using namespace std;
 
-
 class BusController
 {
   queue<BusRequest> requestQueue;
+
  public:
-  BusController();
-  void insertBusRequest(BusRequest request);
+  void insertBusRequest (BusRequest request);
   BusRequest selectRequest();
 };
 

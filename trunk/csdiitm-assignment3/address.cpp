@@ -4,20 +4,20 @@
 
 #include "address.h"
 
-Address::Address (int set, int index, int offset) {
+Address::Address (int set, int tag, int byte) {
   this->set = set;
-  this->index = index;
-  this->offset = offset;
+  this->tag = tag;
+  this->byte = byte;
 }
 
 int Address::getSet () {
-  return set;
+  return this->set;
 }
 
-int Address::getIndex () {
-  return index;
+int Address::getTag () {
+  return this->tag;
 }
 
-int Address::getOffset () {
-  return offset;
+int Address::getByte () {
+  return this->byte;
 }

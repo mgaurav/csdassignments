@@ -14,15 +14,17 @@ class Block {
   int tag;
   int data;
   char state; 
- public:
-  Block(int tag, int data, char state);
-  void changeState(char newState, int data);
-  bool getTag(int tag);
-  int getState();
 
-  //not being used
-  int getData();
-  void writeData(int data);
+ public:
+  Block () {}
+  Block (int tag, char state, int data);
+  void changeState (char newState, int data);
+  int getTag ();
+  char getState ();
+
+  // not being used
+  int getData ();
+  void writeData (int data);
 };
 
 #endif
