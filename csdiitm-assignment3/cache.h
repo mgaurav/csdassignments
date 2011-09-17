@@ -33,10 +33,10 @@ class Cache
  public:
   Cache (int associativity, int blockSizeInBytes, int cacheSizeInBytes);
   bool updateCache (Address address, Block& evictedBlock);
-  void updateBlockState(Address address, char newState, int data);
+  void updateBlockState (Address address, char newState, int data);
   
-  //returns the data present in the cache, used from bus side
-  bool lookupAddress(Address address, int &data);
+  // returns the data present in the cache, used from bus side
+  bool lookupAddress (Address address, int &data);
 
   int getAssociativity () {
     return associativity;

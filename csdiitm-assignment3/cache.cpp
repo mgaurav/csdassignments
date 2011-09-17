@@ -24,18 +24,51 @@ Cache::Cache (int associativity, int blockSizeInBytes, int cacheSizeInBytes) {
 
 /**
  * Updates cache appropriately when an access to 'address' occurs.
+ *
  * Updates Hit count, Miss count, Cold Miss count appropriately.
+ *
+ * Returns true if Hit in cache happens,
+ *         false if Miss in cache happens.
+ * Updates _evictedBlock if any block is evicted from the cache.
  */
-void Cache::updateCache (Address address) {
-  if (addressLog.find(make_pair(address.getSet(), address.getIndex()))
+bool Cache::updateCache (Address address, Block& evictedBlock) {
+  if (addressLog.find(make_pair(address.getSet(), address.getTag()))
       == addressLog.end()) {
-    addressLog.insert(make_pair(address.getSet(), address.getIndex()));
+    addressLog.insert(make_pair(address.getSet(), address.getTag()));
     numColdMiss++;
   }
 
-  bool status = cache[address.getSet()].updateLRUQueue(address);
+  bool status = cache[address.getSet()].updateLRUQueue(address.getTag(),
+						       evictedBlock);
   if (status)
     numHits++;
   else
     numMisses++;
+
+  return status;
+}
+
+
+/**
+ * Modifies state and data of the block specified by the address. 
+ */
+void Cache::updateBlockState(Address address, char newState, int data) {
+  cache[address.getSet()].updateBlockStateinQueue(address.getTag(),
+						  newState, data);
+}
+
+/**
+ * Return true if _address is present in the cache, otherwise returns
+ * false.
+ * Updates _data with the data present in the cache block.
+ */
+bool Cache::lookupAddress (Address address, int& data) {
+  Block block(0, 'N', 0);
+  bool status = cache[address.getSet()].getBlock(address.getTag(), block);
+  if (status) {
+    data = block.getData();
+    return true;
+  } else {
+    return false;
+  }
 }

@@ -9,17 +9,23 @@
 
 #include <list>
 #include "block.h"
-#include "address.h"
 
 using namespace std;
 
 class LRUQueue
 {
   list<Block> lruQueue;
-  int ways;
+  unsigned int ways;
+
  public:
-  LRUQueue (int ways);
-  bool updateLRUQueue (Address address, Block& evictedBlock);
+  LRUQueue (unsigned int ways);
+
+  bool updateBlockStateinQueue (int tag, char newState, int data);
+  bool updateLRUQueue (int tag, Block& evictedBlock);
+  bool getBlock (int tag, Block& block);
+
+  // only used for testing
+  list<Block> getLruQueue ();
 };
 
 #endif
