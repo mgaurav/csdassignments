@@ -18,7 +18,9 @@ class CacheController
  private:
 
   Cache* C;
-  
+  int coherenceMisses;
+  vector< pair<char, char> > stateChanges;
+
  public:
   CacheController (int associativity, int blockSizeInBytes, int cacheSizeInBytes);
 
@@ -29,6 +31,8 @@ class CacheController
   void writeRequestFromBus (Address* address, bool sharedSignal, int data, Block& evictedBlock);
   void invalidateData (Address* address);
   bool isShared (Address* address); 
+  int getCoherenceMissCount();
+  void printStateChanges();
 };
 
 #endif
