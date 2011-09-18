@@ -23,10 +23,12 @@ class CacheController
   CacheController (int associativity, int blockSizeInBytes, int cacheSizeInBytes);
 
   //functions used by the simulator in accessing the controller.
-  bool serveProcessorReadRequest (int address, Block& evictedBlock);
-  bool serveProcessorWriteRequest (int address, Block& evictedBlock);
-  bool readRequestFromBus (int address, int& data);
-  void writeRequestFromBus (int address, bool sharedSignal, int data);
+  bool serveProcessorReadRequest (Address* address);
+  bool serveProcessorWriteRequest (Address* address);
+  bool readRequestFromBus (Address* address, int& data);
+  void writeRequestFromBus (Address* address, bool sharedSignal, int data, Block& evictedBlock);
+  void invalidateData (Address* address);
+  bool isShared (Address* address); 
 };
 
 #endif
