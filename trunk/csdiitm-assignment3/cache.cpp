@@ -62,11 +62,12 @@ void Cache::updateBlockState(Address address, char newState, int data) {
  * false.
  * Updates _data with the data present in the cache block.
  */
-bool Cache::lookupAddress (Address address, int& data) {
+bool Cache::lookupAddress (Address address, int& data, char& state) {
   Block block(0, 'N', 0);
   bool status = cache[address.getSet()].getBlock(address.getTag(), block);
   if (status) {
     data = block.getData();
+    state = block.getState();
     return true;
   } else {
     return false;

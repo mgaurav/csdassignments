@@ -36,7 +36,7 @@ class Cache
   void updateBlockState (Address address, char newState, int data);
   
   // returns the data present in the cache, used from bus side
-  bool lookupAddress (Address address, int &data);
+  bool lookupAddress (Address address, int &data, char &state);
 
   int getAssociativity () {
     return associativity;
