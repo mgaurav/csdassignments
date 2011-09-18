@@ -17,7 +17,7 @@ class CacheController
 {
  private:
 
-  Cache C;
+  Cache* C;
   
  public:
   CacheController (int associativity, int blockSizeInBytes, int cacheSizeInBytes);
