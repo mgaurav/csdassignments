@@ -4,7 +4,7 @@
 
 #include "lruqueue.h"
 #include "stdio.h"
-
+#include "block.h"
 LRUQueue::LRUQueue (unsigned int ways) {
   this->ways = ways;
 }

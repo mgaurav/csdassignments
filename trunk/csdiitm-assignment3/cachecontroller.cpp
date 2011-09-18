@@ -1,4 +1,5 @@
 #include "cachecontroller.h"
+#include <iostream>
 
 CacheController::CacheController (int associativity, int blockSizeInBytes, 
 				  int cacheSizeInBytes)
@@ -74,7 +75,7 @@ bool CacheController::isShared (Address* address)
 
 void CacheController::printStateChanges ()
 {
-  int len = stateChanges.length();
+  int len = stateChanges.size();
   for (int i = 0; i < len; i++) {
     cout << stateChanges[i].first << " " << stateChanges[i].second << "\n";
   } 
