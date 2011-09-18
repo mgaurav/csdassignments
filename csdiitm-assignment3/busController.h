@@ -16,11 +16,8 @@ using namespace std;
 
 class BusController
 {
-  queue<BusRequest> requestQueue;
-
- public:
-  void insertBusRequest (BusRequest request);
-  BusRequest selectRequest();
+  public:
+    queue<BusRequest *> requestQueue;
 };
 
 #endif
