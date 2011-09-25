@@ -9,7 +9,6 @@
 #define NUMOFCACHES 4
 
 #include "cachecontroller.h"
-#include "busController.h"
 #include <vector>
 #include <fstream>
 #include "address.h"
@@ -25,7 +24,6 @@ class Simulator
  private:
   
   vector<CacheController *> cacheControllerVector;
-  BusController* busController;
 
   //think about logic of params
   void serviceRequest (BusRequest * r);
