@@ -12,6 +12,11 @@
 
 using namespace std;
 
+struct Changes {
+  char initial;
+  char final;
+  Address address;
+};
 
 class CacheController
 {
@@ -19,7 +24,7 @@ class CacheController
 
   Cache* C;
   int coherenceMisses;
-  vector< pair<char, char> > stateChanges;
+  vector<Changes> stateChanges;
 
  public:
   CacheController (int associativity, int blockSizeInBytes, int cacheSizeInBytes);
@@ -27,11 +32,13 @@ class CacheController
   //functions used by the simulator in accessing the controller.
   bool serveProcessorReadRequest (Address* address);
   bool serveProcessorWriteRequest (Address* address);
-  bool readRequestFromBus (Address* address, int& data);
-  void writeRequestFromBus (Address* address, bool sharedSignal, int data, Block& evictedBlock);
+  bool readRequestFromBus (Address* address, int& data, bool write);
+  void writeRequestFromBus (Address* address, bool sharedSignal, int data, Block& evictedBlock, bool write);
   void invalidateData (Address* address);
+
   bool isShared (Address* address); 
   int getCoherenceMissCount();
+
   void printStateChanges();
 };
 

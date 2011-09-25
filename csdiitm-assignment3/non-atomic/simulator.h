@@ -9,7 +9,10 @@
 #define NUMOFCACHES 4
 
 #include "cachecontroller.h"
-#include "bus.h"
+#include "busController.h"
+#include <vector>
+#include <fstream>
+#include "address.h"
 
 //more or less all the complicationas have been pushed inside the simulator
 // class to take care of the dependencies
@@ -21,16 +24,16 @@ class Simulator
 {
  private:
   
-  CacheController caches [NUMOFCACHES];
-  Bus B;
+  vector<CacheController *> cacheControllerVector;
+  BusController* busController;
+
+  //think about logic of params
+  void serviceRequest (BusRequest * r);
+  void convertAddress (char* addressStr, int& tag, int& set, int& block);
 
  public:
-  Simulator(Bus B);
-
-  int readData(int index, int address);
-
-  int writeData(int index, int address, int data);
-  
+  Simulator (int associativity, int blockSizeInBytes, int cacheSizeInBytes);
+  void simulate (string filename);
 };
 
 #endif

@@ -1,0 +1,69 @@
+Stats for core 0
+Coherency Misses 23
+EM 348
+SS 9189
+NM 3022
+SM 18
+EE 18865
+IS 18
+MI 27
+NE 1384
+MM 113536
+SI 39
+IM 5
+MS 69
+NS 103
+ES 23
+
+
+Stats for core 1
+Coherency Misses 1
+EM 6
+MS 8
+NM 38
+MM 845
+MI 5
+IS 1
+EE 44
+NE 49
+SS 268
+SI 10
+SM 13
+NS 40
+ES 37
+
+
+Stats for core 2
+Coherency Misses 1
+EM 4
+MS 9
+NM 43
+MM 881
+MI 6
+IS 1
+EE 29
+NE 21
+SS 258
+SI 11
+SM 15
+NS 75
+ES 7
+
+
+Stats for core 3
+Coherency Misses 1
+EM 3
+MS 7
+NM 39
+MM 844
+MI 1
+IS 1
+EE 19
+NE 13
+SS 170
+SI 4
+SM 16
+NS 76
+ES 3
+
+

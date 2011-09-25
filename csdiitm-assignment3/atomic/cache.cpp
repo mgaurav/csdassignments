@@ -68,7 +68,11 @@ bool Cache::lookupAddress (Address address, int& data, char& state) {
   if (status) {
     data = block.getData();
     state = block.getState();
-    return true;
+    if (block.getState() != 'I') {
+      return true;
+    } else {
+      return false;
+    }
   } else {
     return false;
   }
