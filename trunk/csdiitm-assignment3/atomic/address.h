@@ -7,6 +7,8 @@
 #ifndef ADDRESS_H
 #define ADDRESS_H
 
+#include <iostream>
+
 using namespace std;
 
 /**
@@ -31,6 +33,8 @@ class Address
   int getSet ();
   int getTag ();
   int getByte ();
+
+  void print ();
 };
 
 #endif

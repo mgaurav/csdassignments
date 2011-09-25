@@ -21,3 +21,7 @@ int Address::getTag () {
 int Address::getByte () {
   return this->byte;
 }
+
+void Address::print () {
+  cout << tag << " " << set << " " << byte << '\n';
+}

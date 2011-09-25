@@ -17,9 +17,10 @@ class BusRequest {
  public:
   int timeStamp;
   int cacheControllerId;
-  bool rW;
+  int rW;
   Address * address;  
-  BusRequest(int  t,int c, bool r, int set, int tag, int byte){
+
+  BusRequest(int  t, int c, bool r, int set, int tag, int byte){
      this->timeStamp =t;
      this->cacheControllerId = c;
      this->rW = r;
