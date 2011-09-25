@@ -1,3 +1,5 @@
+// g++ main.cpp simulator.cpp cachecontroller.cpp cache.cpp lruqueue.cpp address.cpp block.cpp
+
 #include "simulator.h"
 #include <stdio.h>
 #include <string>
